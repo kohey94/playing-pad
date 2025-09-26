@@ -1,6 +1,7 @@
 // src/components/VisualWaveform.tsx
 import { useEffect, useRef } from "react";
 import { analyser } from "../audio/analyser";
+import { useColorMode } from "@chakra-ui/react";
 
 const frag = `
 #ifdef GL_ES
@@ -9,6 +10,8 @@ precision mediump float;
 
 uniform vec2 u_resolution;
 uniform sampler2D u_waveform;
+uniform vec3 u_bg;
+uniform vec3 u_fg;
 
 void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;
@@ -23,10 +26,7 @@ void main() {
   float dist = abs(uv.y - (0.5 - wave * 0.4));
   float line = smoothstep(0.02, 0.0, dist);
 
-  vec3 bg = vec3(0.05, 0.05, 0.1);
-  vec3 fg = vec3(0.0, 1.0, 1.0);
-
-  gl_FragColor = vec4(mix(bg, fg, line), 1.0);
+  gl_FragColor = vec4(mix(u_bg, u_fg, line), 1.0);
 }
 `;
 
@@ -39,6 +39,7 @@ void main() {
 
 export default function VisualWaveform() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const { colorMode } = useColorMode();
 
     useEffect(() => {
         const canvas = canvasRef.current!;
@@ -73,10 +74,7 @@ export default function VisualWaveform() {
         gl.bindBuffer(gl.ARRAY_BUFFER, buf);
         gl.bufferData(
             gl.ARRAY_BUFFER,
-            new Float32Array([
-                -1, -1, 1, -1, -1, 1,
-                1, -1, 1, 1, -1, 1
-            ]),
+            new Float32Array([-1, -1, 1, -1, -1, 1, 1, -1, 1, 1, -1, 1]),
             gl.STATIC_DRAW
         );
         const loc = gl.getAttribLocation(program, "a_position");
@@ -86,6 +84,8 @@ export default function VisualWaveform() {
         // Uniform locations
         const uRes = gl.getUniformLocation(program, "u_resolution");
         const uWave = gl.getUniformLocation(program, "u_waveform");
+        const uBg = gl.getUniformLocation(program, "u_bg");
+        const uFg = gl.getUniformLocation(program, "u_fg");
 
         // 波形テクスチャ
         const tex = gl.createTexture();
@@ -128,6 +128,15 @@ export default function VisualWaveform() {
             gl.uniform2f(uRes, canvas.width, canvas.height);
             gl.uniform1i(uWave, 0);
 
+            // 色を Chakra のモードに合わせる
+            if (colorMode === "light") {
+                gl.uniform3fv(uBg, [0.9, 0.9, 0.95]); // 明るい背景
+                gl.uniform3fv(uFg, [0.2, 0.4, 0.8]);  // 青っぽい線
+            } else {
+                gl.uniform3fv(uBg, [0.05, 0.05, 0.1]); // 暗い背景
+                gl.uniform3fv(uFg, [0.0, 1.0, 1.0]);   // シアン線
+            }
+
             gl.drawArrays(gl.TRIANGLES, 0, 6);
 
             requestAnimationFrame(loop);
@@ -137,7 +146,7 @@ export default function VisualWaveform() {
         return () => {
             window.removeEventListener("resize", resize);
         };
-    }, []);
+    }, [colorMode]);
 
     return (
         <canvas
@@ -148,7 +157,7 @@ export default function VisualWaveform() {
                 width: "100vw",
                 height: "100vh",
                 zIndex: 0,
-                pointerEvents: "none"
+                pointerEvents: "none",
             }}
         />
     );
