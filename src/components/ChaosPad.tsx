@@ -18,10 +18,8 @@ const ChaosPad: React.FC<ChaosPadProps> = ({ size = 300, onChange }) => {
     // 選択中の波形
     const [waveform, setWaveform] = useState<"sine" | "triangle" | "square">("sine");
 
-    // シンセ & フィルター
+    // シンセ
     const synthRef = useRef<Tone.Synth | null>(null);
-    const filterRef = useRef<Tone.Filter | null>(null);
-
     if (!synthRef.current) {
         synthRef.current = new Tone.Synth({
             oscillator: { type: waveform },
