@@ -4,6 +4,7 @@ import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import ChaosPad from "./components/ChaosPad";
 import VisualShaderBackground from "./components/VisualShaderBackground";
 
+
 export default function App() {
   const { colorMode, toggleColorMode } = useColorMode();
 
