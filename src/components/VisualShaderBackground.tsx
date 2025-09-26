@@ -1,5 +1,5 @@
 // src/components/VisualWaveform.tsx
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { analyser } from "../audio/analyser";
 
 const frag = `
