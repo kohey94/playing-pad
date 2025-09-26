@@ -37,8 +37,8 @@ const ChaosPad: React.FC<ChaosPadProps> = ({ size = 300, onChange }) => {
         });
 
         reverbRef.current = new Tone.Freeverb({
-            roomSize: 0,
-            dampening: 0,
+            roomSize: 0.1,
+            dampening: 10,
             wet: 0,
         });
     }
