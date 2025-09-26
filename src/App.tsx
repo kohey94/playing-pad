@@ -52,11 +52,6 @@ export default function App() {
             size={300}
             onChange={(x, y) => setCoords({ x, y })}
           />
-          {coords && (
-            <Text mt={4}>
-              X: {coords.x.toFixed(2)}, Y: {coords.y.toFixed(2)}
-            </Text>
-          )}
         </Box>
       </Flex>
     </Box>

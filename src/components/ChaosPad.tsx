@@ -25,6 +25,12 @@ const ChaosPad: React.FC<ChaosPadProps> = ({ size = 300, onChange }) => {
     const delayRef = useRef<Tone.FeedbackDelay | null>(null);
     const reverbRef = useRef<Tone.Freeverb | null>(null);
 
+    // 1オクターブの音階（C4〜C5）
+    const notes = [
+        "C4", "C#4", "D4", "D#4", "E4", "F4",
+        "F#4", "G4", "G#4", "A4", "A#4", "B4", "C5"
+    ];
+
     if (!synthRef.current) {
         synthRef.current = new Tone.Synth({
             oscillator: { type: waveform },
@@ -80,8 +86,10 @@ const ChaosPad: React.FC<ChaosPadProps> = ({ size = 300, onChange }) => {
 
         setPosition({ x, y });
 
-        const freq = 200 + (x / rect.width) * 800;
-        synthRef.current!.frequency.value = freq;
+        // --- X軸を音階にスナップ ---
+        const noteIndex = Math.floor((x / rect.width) * notes.length);
+        const note = notes[Math.min(noteIndex, notes.length - 1)];
+        synthRef.current!.frequency.value = Tone.Frequency(note).toFrequency();
 
         // Y座標を 0〜1 に正規化（下0、上1）
         const normY = 1 - y / rect.height;
