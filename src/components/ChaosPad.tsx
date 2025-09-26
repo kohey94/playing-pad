@@ -3,56 +3,58 @@ import { Box, useColorMode } from "@chakra-ui/react";
 import * as Tone from "tone";
 
 type ChaosPadProps = {
-    size?: number; // パッドのサイズ (px)
-    onChange?: (x: number, y: number) => void; // 座標を外に渡す
+    size?: number;
+    onChange?: (x: number, y: number) => void;
 };
 
 const ChaosPad: React.FC<ChaosPadProps> = ({ size = 300, onChange }) => {
     const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
     const padRef = useRef<HTMLDivElement>(null);
+    const rafRef = useRef<number | null>(null);
     const { colorMode } = useColorMode();
 
-    // シンセを1つ作成
+    // シンセ
     const synthRef = useRef<Tone.Synth | null>(null);
-
     if (!synthRef.current) {
         synthRef.current = new Tone.Synth().toDestination();
     }
 
-    const handleMove = (clientX: number, clientY: number) => {
+    const updateSound = (clientX: number, clientY: number) => {
         if (!padRef.current) return;
         const rect = padRef.current.getBoundingClientRect();
-        // 枠外に出ても範囲内にクリップ
+
+        // 枠内にクリップ
         const x = Math.min(Math.max(0, clientX - rect.left), rect.width);
         const y = Math.min(Math.max(0, clientY - rect.top), rect.height);
+
         setPosition({ x, y });
 
-        // X座標を周波数に、Y座標を音量にマッピング
-        const freq = 200 + (x / rect.width) * 800; // 200Hz ～ 1000Hz
-        const volume = -20 + (1 - y / rect.height) * 20; // -20dB ～ 0dB
+        const freq = 200 + (x / rect.width) * 800; // 200Hz〜1000Hz
+        const volume = -20 + (1 - y / rect.height) * 20; // -20dB〜0dB
+
         synthRef.current!.frequency.value = freq;
         synthRef.current!.volume.value = volume;
 
-        // 0〜1 の正規化値で外に通知
-        if (onChange) {
-            onChange(x / rect.width, y / rect.height);
-        }
+        if (onChange) onChange(x / rect.width, y / rect.height);
+    };
+
+    // move イベントを requestAnimationFrame でラップ
+    const handleMove = (clientX: number, clientY: number) => {
+        if (rafRef.current) cancelAnimationFrame(rafRef.current);
+        rafRef.current = requestAnimationFrame(() => {
+            updateSound(clientX, clientY);
+        });
     };
 
     const handlePress = (clientX: number, clientY: number) => {
-        Tone.start(); // 必須: ユーザー操作で AudioContext を開始
-        if (!padRef.current) return;
-
-        const rect = padRef.current.getBoundingClientRect();
-        const x = Math.min(Math.max(0, clientX - rect.left), rect.width);
-
-        // 押した場所に対応する周波数を計算
-        const freq = 200 + (x / rect.width) * 800; // 200Hz ～ 1000Hz
-        const note = Tone.Frequency(freq).toNote(); // 周波数を音名に変換
-
+        Tone.start();
         handleMove(clientX, clientY);
 
-        // 押した位置に応じた音階からスタート
+        const rect = padRef.current!.getBoundingClientRect();
+        const x = Math.min(Math.max(0, clientX - rect.left), rect.width);
+        const freq = 200 + (x / rect.width) * 800;
+        const note = Tone.Frequency(freq).toNote();
+
         synthRef.current!.triggerAttack(note);
     };
 
@@ -62,20 +64,21 @@ const ChaosPad: React.FC<ChaosPadProps> = ({ size = 300, onChange }) => {
     };
 
     useEffect(() => {
-        const handleMouseUp = () => handleRelease();
-        const handleTouchEnd = () => handleRelease();
+        const mouseUp = () => handleRelease();
+        const touchEnd = () => handleRelease();
 
-        window.addEventListener("mouseup", handleMouseUp);
-        window.addEventListener("touchend", handleTouchEnd);
+        window.addEventListener("mouseup", mouseUp);
+        window.addEventListener("touchend", touchEnd);
 
         return () => {
-            window.removeEventListener("mouseup", handleMouseUp);
-            window.removeEventListener("touchend", handleTouchEnd);
+            window.removeEventListener("mouseup", mouseUp);
+            window.removeEventListener("touchend", touchEnd);
         };
     }, []);
 
     return (
         <Box
+            style={{ touchAction: "none" }}
             ref={padRef}
             w={size}
             h={size}
@@ -84,17 +87,16 @@ const ChaosPad: React.FC<ChaosPadProps> = ({ size = 300, onChange }) => {
             position="relative"
             onMouseDown={(e) => handlePress(e.clientX, e.clientY)}
             onMouseMove={(e) => e.buttons === 1 && handleMove(e.clientX, e.clientY)}
-            onMouseUp={handleRelease}
-
             onTouchStart={(e) => {
+                e.preventDefault();
                 const touch = e.touches[0];
                 handlePress(touch.clientX, touch.clientY);
             }}
             onTouchMove={(e) => {
+                e.preventDefault(); // ← スクロール防止
                 const touch = e.touches[0];
                 handleMove(touch.clientX, touch.clientY);
             }}
-            onTouchEnd={handleRelease}
         >
             {position && (
                 <Box
@@ -106,6 +108,7 @@ const ChaosPad: React.FC<ChaosPadProps> = ({ size = 300, onChange }) => {
                     bg="teal.300"
                     borderRadius="full"
                     pointerEvents="none"
+                    willChange="transform" // ← GPUヒントで滑らかに
                 />
             )}
         </Box>
