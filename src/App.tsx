@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Box, Flex, Heading, IconButton, useColorMode, Text } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import ChaosPad from "./components/ChaosPad";
+import VisualShaderBackground from "./components/VisualShaderBackground";
 
 export default function App() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -10,6 +11,8 @@ export default function App() {
 
   return (
     <Box minH="100vh" bg={colorMode === "light" ? "gray.100" : "gray.900"}>
+      <VisualShaderBackground />
+
       <Flex
         as="header"
         align="center"

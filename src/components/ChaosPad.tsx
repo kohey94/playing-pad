@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Box, useColorMode } from "@chakra-ui/react";
 import * as Tone from "tone";
+import { analyser } from "../audio/analyser";
 
 type ChaosPadProps = {
     size?: number;
@@ -17,6 +18,8 @@ const ChaosPad: React.FC<ChaosPadProps> = ({ size = 300, onChange }) => {
     const synthRef = useRef<Tone.Synth | null>(null);
     if (!synthRef.current) {
         synthRef.current = new Tone.Synth().toDestination();
+        // 音はそのままスピーカーへ出しつつ、並行してアナライザへも流す
+        synthRef.current.connect(analyser);
     }
 
     const updateSound = (clientX: number, clientY: number) => {
