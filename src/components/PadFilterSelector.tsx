@@ -14,7 +14,7 @@ export default function PadFilterSelector({ value, onChange }: PadFileterTypeSel
                 <Radio value="none">None</Radio>
                 <Radio value="delay">Delay</Radio>
                 <Radio value="reverb">Reverb</Radio>
-                <Radio value="pitchshift">Pitchshift</Radio>
+                <Radio value="pitchshift">Pitch</Radio>
             </HStack>
         </RadioGroup>
     );

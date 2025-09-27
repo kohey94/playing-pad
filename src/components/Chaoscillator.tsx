@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Box, VStack, useColorMode } from "@chakra-ui/react";
+import { Box, VStack, useColorMode, Flex } from "@chakra-ui/react";
 import * as Tone from "tone";
 import { analyser } from "../audio/analyser";
 import WaveformSelector from "./WaveformSelector";
@@ -88,9 +88,12 @@ export default function Chaoscillator({ size = 300, onChange }: ChaoscillatorPro
         setPosition({ x, y });
 
         // --- X軸を音階にスナップ ---
-        const noteIndex = Math.floor((x / rect.width) * notes.length);
-        const note = notes[Math.min(noteIndex, notes.length - 1)];
-        synthRef.current!.frequency.value = Tone.Frequency(note).toFrequency();
+        // --- X軸を周波数に連続マッピング ---
+        const minFreq = 200;   // 下限の周波数
+        const maxFreq = 1000;  // 上限の周波数
+
+        const freq = minFreq + (x / rect.width) * (maxFreq - minFreq);
+        synthRef.current!.frequency.value = freq;
 
         // Y座標を 0〜1 に正規化（下0、上1）
         const normY = 1 - y / rect.height;
@@ -147,12 +150,21 @@ export default function Chaoscillator({ size = 300, onChange }: ChaoscillatorPro
     }, []);
 
     return (
-        <VStack spacing={4}>
-            {/* 波形切り替え */}
-            <WaveformSelector value={waveform} onChange={setWaveform} />
-
-            {/* フィルター切り替え */}
-            <FilterSelector value={filterType} onChange={setFilterType} />
+        <Flex
+            direction="column"
+            justify="space-between"
+            align="center"
+            w="100%"
+            h="100%" // 親の高さに合わせる
+            maxH="calc(100vh - 100px)" // ヘッダー分を引いた高さ
+            py={10} // 上下に余白をつけてベタ付き防止
+        >
+            <VStack spacing={4}>
+                {/* 波形切り替え */}
+                <WaveformSelector value={waveform} onChange={setWaveform} />
+                {/* フィルター切り替え */}
+                <FilterSelector value={filterType} onChange={setFilterType} />
+            </VStack>
 
             {/* カオスパッド */}
             <Box
@@ -190,6 +202,6 @@ export default function Chaoscillator({ size = 300, onChange }: ChaoscillatorPro
                     />
                 )}
             </Box>
-        </VStack>
+        </Flex >
     );
 };

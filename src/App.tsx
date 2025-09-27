@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Box, Flex, Heading, IconButton, useColorMode, VStack } from "@chakra-ui/react";
+import { Box, Flex, Heading, IconButton, useColorMode } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import Chaoscillator from "./components/Chaoscillator";
 import ChaosPad from "./components/ChaosPad";
@@ -12,53 +12,55 @@ export default function App() {
   const [mode, setMode] = useState<padMode>("oscillator");
 
   return (
-    <Box minH="100vh" bg={colorMode === "light" ? "gray.100" : "gray.900"}>
+    <Box
+      minH="100vh"
+      h="100vh"
+      overflow="hidden"
+      bg={colorMode === "light" ? "gray.100" : "gray.900"}
+    >
       <VisualShaderBackground />
 
-      <Flex
-        as="header"
-        align="center"
-        justify="space-between"
-        px={6}
-        py={4}
-        borderBottom="1px"
-        borderColor={colorMode === "light" ? "gray.200" : "gray.700"}
-      >
-        <Heading
-          size="md"
-          color={colorMode === "light" ? "gray.800" : "gray.100"}
+      <Flex direction="column" h="100vh">
+        {/* ヘッダー */}
+        <Flex
+          as="header"
+          align="center"
+          justify="space-between"
+          px={6}
+          py={4}
+          zIndex={10}
         >
-          playing-pad
-        </Heading>
+          <Heading
+            size="md"
+            color={colorMode === "light" ? "gray.800" : "gray.100"}
+            zIndex={10}
+          >
+            playing-pad
+          </Heading>
 
-        <IconButton
-          aria-label="Toggle color mode"
-          onClick={toggleColorMode}
-          icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
-          variant="ghost"
-          colorScheme="gray"
-        />
-      </Flex>
+          <IconButton
+            aria-label="Toggle color mode"
+            onClick={toggleColorMode}
+            icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
+            variant="ghost"
+            colorScheme="gray"
+          />
+        </Flex>
 
-      <Flex
-        p={8}
-        color={colorMode === "light" ? "gray.800" : "gray.100"}
-        align="center"        // 縦方向の中央寄せ
-        justify="center"      // 横方向の中央寄せ
-        flexDirection="column" // 縦並び（パッドと座標を中央下に配置）
-        minH="calc(100vh - 64px)" // headerを除いた残り高さを占める（header高さ: 約64px）
-      >
-        <VStack spacing={6}>
-          {/* モード切替 */}
-          <ModeSelector value={mode} onChange={setMode} />
+        {/* メイン部分 */}
+        <Flex flex="1" direction="column" align="center" justify="center">
+          {/* タブ */}
+          <Box mb={6} w="100%" maxW="250px">
+            <ModeSelector value={mode} onChange={setMode} />
+          </Box>
 
-          {/* モードごとに表示切替 */}
+          {/* パッド */}
           {mode === "oscillator" ? (
             <Chaoscillator size={300} />
           ) : (
             <ChaosPad size={300} />
           )}
-        </VStack>
+        </Flex>
       </Flex>
     </Box>
   );

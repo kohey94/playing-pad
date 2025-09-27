@@ -1,5 +1,5 @@
 // src/components/ModeSelector.tsx
-import { Tabs, TabList, Tab } from "@chakra-ui/react";
+import { Tabs, TabList, Tab, useColorMode } from "@chakra-ui/react";
 import type { padMode } from "../types";
 
 type ModeSelectorProps = {
@@ -8,17 +8,19 @@ type ModeSelectorProps = {
 }
 
 export default function ModeSelector({ value, onChange }: ModeSelectorProps) {
+    const { colorMode } = useColorMode();
+
     return (
         <Tabs
             index={value === "oscillator" ? 0 : 1}
             onChange={(index) => onChange(index === 0 ? "oscillator" : "mic")}
-            variant="enclosed"
-            colorScheme="teal"
+            variant="soft-rounded"
+            colorScheme={colorMode === "light" ? "blue" : "teal"}
             isFitted
         >
             <TabList>
-                <Tab>Oscillator</Tab>
-                <Tab>Microphone</Tab>
+                <Tab>OSC</Tab>
+                <Tab>MIC</Tab>
             </TabList>
         </Tabs>
     );

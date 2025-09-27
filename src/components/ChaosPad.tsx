@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Box, VStack, useColorMode } from "@chakra-ui/react";
+import { Box, VStack, useColorMode, Flex } from "@chakra-ui/react";
 import * as Tone from "tone";
 import { analyser } from "../audio/analyser";
 import PadFilterSelector from "./PadFilterSelector";
@@ -121,8 +121,18 @@ export default function ChaosPad({ size = 300 }: ChaosPadProps) {
     };
 
     return (
-        <VStack spacing={4}>
-            <PadFilterSelector value={padFilterType} onChange={setPadFilterType} />
+        <Flex
+            direction="column"
+            justify="space-between"
+            align="center"
+            w="100%"
+            h="100%" // 親の高さに合わせる
+            maxH="calc(100vh - 100px)" // ヘッダー分を引いた高さ
+            py={10} // 上下に余白をつけてベタ付き防止
+        >
+            <VStack spacing={4}>
+                <PadFilterSelector value={padFilterType} onChange={setPadFilterType} />
+            </VStack>
             <Box
                 style={{ touchAction: "none" }}
                 ref={padRef}
@@ -157,6 +167,7 @@ export default function ChaosPad({ size = 300 }: ChaosPadProps) {
                     />
                 )}
             </Box>
-        </VStack>
+
+        </Flex>
     );
 };

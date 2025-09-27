@@ -17,13 +17,13 @@ void main() {
   vec2 uv = gl_FragCoord.xy / u_resolution.xy;
 
   // 波形データを横軸に対応させてサンプリング
-  float wave = texture2D(u_waveform, vec2(uv.x, 0.0)).r;
+  float wave = texture2D(u_waveform, vec2(uv.x * 0.05, 0.0)).r;
 
   // 0..1 → -1..1 に戻す
   wave = wave * 2.0 - 1.0;
 
   // y位置と波形の距離で線っぽくする
-  float dist = abs(uv.y - (0.5 - wave * 0.4));
+  float dist = abs(uv.y - (0.5 - wave * 0.8));
   float line = smoothstep(0.02, 0.0, dist);
 
   gl_FragColor = vec4(mix(u_bg, u_fg, line), 1.0);
@@ -130,7 +130,7 @@ export default function VisualWaveform() {
 
             // 色を Chakra のモードに合わせる
             if (colorMode === "light") {
-                gl.uniform3fv(uBg, [0.9, 0.9, 0.95]); // 明るい背景
+                gl.uniform3fv(uBg, [1, 1, 1]); // 明るい背景
                 gl.uniform3fv(uFg, [0.2, 0.4, 0.8]);  // 青っぽい線
             } else {
                 gl.uniform3fv(uBg, [0.05, 0.05, 0.1]); // 暗い背景
