@@ -1,6 +1,6 @@
 import { Box, Flex, Heading, IconButton, useColorMode } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
-import ChaosPad from "./components/ChaosPad";
+import Chaoscillator from "./components/Chaoscillator";
 import VisualShaderBackground from "./components/VisualShaderBackground";
 
 
@@ -45,7 +45,7 @@ export default function App() {
         minH="calc(100vh - 64px)" // headerを除いた残り高さを占める（header高さ: 約64px）
       >
         <Box p={6}>
-          <ChaosPad
+          <Chaoscillator
             size={300}
           />
         </Box>
