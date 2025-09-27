@@ -2,12 +2,10 @@ import { useState } from "react"
 import { Box, Flex, Heading, IconButton, useColorMode, VStack } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import Chaoscillator from "./components/Chaoscillator";
+import ChaosPad from "./components/ChaosPad";
 import VisualShaderBackground from "./components/VisualShaderBackground";
 import ModeSelector from "./components/ModeSelector";
 import type { padMode } from "./types";
-
-// MicChaosPad は未実装なので仮置き
-const MicChaosPad = () => <Box>Mic Chaos Pad (Coming soon)</Box>;
 
 export default function App() {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -58,7 +56,7 @@ export default function App() {
           {mode === "oscillator" ? (
             <Chaoscillator size={300} />
           ) : (
-            <MicChaosPad />
+            <ChaosPad size={300} />
           )}
         </VStack>
       </Flex>
