@@ -27,10 +27,10 @@ export default function Chaoscillator({ size = 300, onChange }: ChaoscillatorPro
     const reverbRef = useRef<Tone.Freeverb | null>(null);
 
     // 1オクターブの音階（C4〜C5）
-    const notes = [
-        "C5", "C#5", "D5", "D#5", "E5", "F5",
-        "F#5", "G5", "G#5", "A5", "A#5", "B5", "C6"
-    ];
+    //const notes = [
+    //    "C5", "C#5", "D5", "D#5", "E5", "F5",
+    //    "F#5", "G5", "G#5", "A5", "A#5", "B5", "C6"
+    //];
 
     if (!synthRef.current) {
         synthRef.current = new Tone.Synth({
