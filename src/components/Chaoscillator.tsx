@@ -5,12 +5,12 @@ import { analyser } from "../audio/analyser";
 import WaveformSelector from "./WaveformSelector";
 import FilterSelector from "./FilterSelector";
 
-type ChaosPadProps = {
+type ChaoscillatorProps = {
     size?: number;
     onChange?: (x: number, y: number) => void;
 };
 
-const ChaosPad: React.FC<ChaosPadProps> = ({ size = 300, onChange }) => {
+const Chaoscillator: React.FC<ChaoscillatorProps> = ({ size = 300, onChange }) => {
     const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
     const padRef = useRef<HTMLDivElement>(null);
     const rafRef = useRef<number | null>(null);
@@ -193,4 +193,4 @@ const ChaosPad: React.FC<ChaosPadProps> = ({ size = 300, onChange }) => {
     );
 };
 
-export default ChaosPad;
+export default Chaoscillator;
