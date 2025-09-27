@@ -1,11 +1,17 @@
-import { Box, Flex, Heading, IconButton, useColorMode } from "@chakra-ui/react";
+import { useState } from "react"
+import { Box, Flex, Heading, IconButton, useColorMode, VStack } from "@chakra-ui/react";
 import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import Chaoscillator from "./components/Chaoscillator";
 import VisualShaderBackground from "./components/VisualShaderBackground";
+import ModeSelector from "./components/ModeSelector";
+import type { padMode } from "./types";
 
+// MicChaosPad は未実装なので仮置き
+const MicChaosPad = () => <Box>Mic Chaos Pad (Coming soon)</Box>;
 
 export default function App() {
   const { colorMode, toggleColorMode } = useColorMode();
+  const [mode, setMode] = useState<padMode>("oscillator");
 
   return (
     <Box minH="100vh" bg={colorMode === "light" ? "gray.100" : "gray.900"}>
@@ -44,12 +50,18 @@ export default function App() {
         flexDirection="column" // 縦並び（パッドと座標を中央下に配置）
         minH="calc(100vh - 64px)" // headerを除いた残り高さを占める（header高さ: 約64px）
       >
-        <Box p={6}>
-          <Chaoscillator
-            size={300}
-          />
-        </Box>
+        <VStack spacing={6}>
+          {/* モード切替 */}
+          <ModeSelector value={mode} onChange={setMode} />
+
+          {/* モードごとに表示切替 */}
+          {mode === "oscillator" ? (
+            <Chaoscillator size={300} />
+          ) : (
+            <MicChaosPad />
+          )}
+        </VStack>
       </Flex>
     </Box>
   );
-}
+};

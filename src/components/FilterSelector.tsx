@@ -1,15 +1,13 @@
 // src/components/FilterSelector.tsx
-import React from "react";
 import { RadioGroup, HStack, Radio } from "@chakra-ui/react";
+import type { filterType } from "../types";
 
-type filterType = "none" | "delay" | "reverb";
-
-type fileterTypeSelectorProps = {
+type FileterTypeSelectorProps = {
     value: filterType;
     onChange: (value: filterType) => void;
 };
 
-const FilterSelector: React.FC<fileterTypeSelectorProps> = ({ value, onChange }) => {
+export default function FilterSelector({ value, onChange }: FileterTypeSelectorProps) {
     return (
         <RadioGroup onChange={(val) => onChange(val as filterType)} value={value}>
             <HStack spacing={6}>
@@ -20,5 +18,3 @@ const FilterSelector: React.FC<fileterTypeSelectorProps> = ({ value, onChange })
         </RadioGroup>
     );
 };
-
-export default FilterSelector

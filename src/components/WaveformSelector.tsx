@@ -1,16 +1,14 @@
-import React from "react";
 import { RadioGroup, Radio, Stack } from "@chakra-ui/react";
-
-type Waveform = "sine" | "triangle" | "square";
+import type { waveform } from "../types";
 
 type WaveformSelectorProps = {
-    value: Waveform;
-    onChange: (value: Waveform) => void;
+    value: waveform;
+    onChange: (value: waveform) => void;
 };
 
-const WaveformSelector: React.FC<WaveformSelectorProps> = ({ value, onChange }) => {
+export default function WaveformSelector({ value, onChange }: WaveformSelectorProps) {
     return (
-        <RadioGroup onChange={(val) => onChange(val as Waveform)} value={value}>
+        <RadioGroup onChange={(val) => onChange(val as waveform)} value={value}>
             <Stack direction="row" spacing={4} p={4}>
                 <Radio value="sine">Sine</Radio>
                 <Radio value="triangle">Triangle</Radio>
@@ -19,5 +17,3 @@ const WaveformSelector: React.FC<WaveformSelectorProps> = ({ value, onChange }) 
         </RadioGroup>
     );
 };
-
-export default WaveformSelector;

@@ -1,25 +1,24 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Box, VStack, useColorMode } from "@chakra-ui/react";
 import * as Tone from "tone";
 import { analyser } from "../audio/analyser";
 import WaveformSelector from "./WaveformSelector";
 import FilterSelector from "./FilterSelector";
-import type { filterType, waveform } from "../types";
 
 type ChaoscillatorProps = {
     size?: number;
     onChange?: (x: number, y: number) => void;
 };
 
-export default function Chaoscillator({ size = 300, onChange }: ChaoscillatorProps) {
+const Chaoscillator: React.FC<ChaoscillatorProps> = ({ size = 300, onChange }) => {
     const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
     const padRef = useRef<HTMLDivElement>(null);
     const rafRef = useRef<number | null>(null);
     const { colorMode } = useColorMode();
 
     // 選択中の波形とフィルター
-    const [waveform, setWaveform] = useState<waveform>("sine");
-    const [filterType, setFilterType] = useState<filterType>("none");
+    const [waveform, setWaveform] = useState<"sine" | "triangle" | "square">("sine");
+    const [filterType, setFilterType] = useState<"none" | "delay" | "reverb">("none");
 
     // シンセとフィルター
     const synthRef = useRef<Tone.Synth | null>(null);
@@ -193,3 +192,5 @@ export default function Chaoscillator({ size = 300, onChange }: ChaoscillatorPro
         </VStack>
     );
 };
+
+export default Chaoscillator;
