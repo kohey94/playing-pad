@@ -38,14 +38,14 @@ export default function Chaoscillator({ size = 300, onChange }: ChaoscillatorPro
         });
 
         delayRef.current = new Tone.FeedbackDelay({
-            delayTime: 0.1,
-            feedback: 0.1,
+            delayTime: 0.2,
+            feedback: 0.3,
             wet: 0,
         });
 
         reverbRef.current = new Tone.Freeverb({
-            roomSize: 0.1,
-            dampening: 10,
+            roomSize: 0.5,
+            dampening: 3000,
             wet: 0,
         });
     }
@@ -75,7 +75,7 @@ export default function Chaoscillator({ size = 300, onChange }: ChaoscillatorPro
         }
 
         // analyser は最後にスピーカーへ
-        analyser.connect(Tone.Destination);
+        analyser.connect(Tone.getDestination());
     }, [filterType]);
 
     const updateSound = (clientX: number, clientY: number) => {
@@ -97,13 +97,13 @@ export default function Chaoscillator({ size = 300, onChange }: ChaoscillatorPro
 
         if (filterType === "delay" && delayRef.current) {
             delayRef.current.wet.value = normY;
-            delayRef.current.feedback.value = normY * 0.4;
-            delayRef.current.delayTime.value = 0.1 + normY * 0.5;
+            delayRef.current.delayTime.value = 0.05 + normY * 0.5;
+            delayRef.current.feedback.value = normY * 0.7;
         }
         if (filterType === "reverb" && reverbRef.current) {
             reverbRef.current.wet.value = normY; // 上に行くほどリバーブ強く
             reverbRef.current.roomSize.value = normY; // 部屋の広さも大きく
-            reverbRef.current.dampening = 500 + normY * 5000; // 高音の残響も変化
+            //reverbRef.current.dampening = 500 + normY * 5000; // 高音の残響も変化
         }
 
         if (onChange) onChange(x / rect.width, y / rect.height);
